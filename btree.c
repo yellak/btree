@@ -1,6 +1,9 @@
 #include "btree.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+const int T_CHAVE = 9;
 
 /* Função que cria a árvore */
 void criar_arvore(Barv* arvore, int ordem){
@@ -11,7 +14,7 @@ void criar_arvore(Barv* arvore, int ordem){
   arvore->raiz->NRR = NULL;
   arvore->raiz->folha = 1;
   arvore->raiz->n_nos = 0;
-  arvore->raiz->nob = NULL;
+  arvore->raiz->filhos = NULL;
   
   arvore->ordem = ordem;
 }
@@ -22,7 +25,7 @@ NoB* aloca_no(int ordem){
   NoB* novo = (NoB*) malloc(sizeof(NoB));
   novo->chaves = (char**) malloc((2*ordem - 1)*sizeof(char*));
   novo->NRR = (int*) malloc((2*ordem - 1)*sizeof(int));
-  novo->filhos = (NoB*) malloc(2*ordem*sizeof(NoB));
+  novo->filhos = (NoB**) malloc(2*ordem*sizeof(NoB*));
     
   for(i = 0; i < 2*ordem - 1; i++){
     novo->chaves[i] = (char*) malloc(T_CHAVE*sizeof(char));
@@ -62,7 +65,7 @@ void repartir_filho(NoB* pai, int i, int ordem){
     pai->filhos[j + 1] = pai->filhos[j];
   }
 
-  x->filhos[i + 1] = z;
+  pai->filhos[i + 1] = z;
 
   for(j = pai->n_nos; j >= i; j--){
     strcpy(pai->chaves[j + 1], pai->chaves[j]);
@@ -75,23 +78,23 @@ void repartir_filho(NoB* pai, int i, int ordem){
 void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
 	int i = no->n_nos;
 	if(no->folha){
-		while(i >= 0 && strcmp(no->chave[i],chave) > 0){ //Isso pode estar errado
-			strcpy(no->chave[i+1], no->chave[i]);
+		while(i >= 0 && strcmp(no->chaves[i],chave) > 0){ //Isso pode estar errado
+			strcpy(no->chaves[i+1], no->chaves[i]);
 			no->NRR[i+1] = no->NRR[i];
 			i--;
 		}
-		strcpy(no->chave[i+1], chave);
+		strcpy(no->chaves[i+1], chave);
 		no->NRR[i+1] = NRR;
 		no->n_nos++;
 	}
 	else{
-		while(i >= 0 && strcmp(no->chave[i],chave) > 0){ //Isso pode estar errado
+		while(i >= 0 && strcmp(no->chaves[i],chave) > 0){ //Isso pode estar errado
 			i--;
 		}
 		i++;
 		if(no->filhos[i]->n_nos == 2*ordem -1){
 			repartir_filho(no, i, ordem);
-			if(strcmp(no->chave[i],chave) < 0){ //Pode estar errado tbm
+			if(strcmp(no->chaves[i], chave) < 0){ //Pode estar errado tbm
 				i = i + 1;
 			}			
 		}
