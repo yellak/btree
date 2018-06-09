@@ -6,17 +6,27 @@
 const int T_CHAVE = 9;
 
 /* Função que cria a árvore */
-void criar_arvore(Barv* arvore, int ordem){
+Barv* criar_arvore(int ordem){
+  int i;
+  Barv* arvore;
   arvore = (Barv*) malloc(sizeof(Barv));
   
   arvore->raiz = (NoB*) malloc(sizeof(NoB));
-  arvore->raiz->chaves = NULL;
-  arvore->raiz->NRR = NULL;
+  arvore->raiz->chaves = (char**) malloc((2*ordem - 1)*sizeof(char*));
+  arvore->raiz->NRR = (int*) malloc((2*ordem - 1)*sizeof(int));
   arvore->raiz->folha = 1;
   arvore->raiz->n_nos = 0;
-  arvore->raiz->filhos = NULL;
+  arvore->raiz->filhos = (NoB**) malloc(2*ordem*sizeof(NoB*));
+
+  for(i = 0; i < 2*ordem - 1; i++){
+    arvore->raiz->chaves[i] = (char*) malloc(T_CHAVE*sizeof(char));
+    arvore->raiz->filhos[i] = NULL;
+  }
+
+  arvore->raiz->filhos[i] = NULL;
   
   arvore->ordem = ordem;
+  return arvore;
 }
 
 /* Função que aloca um novo nó */
@@ -76,7 +86,7 @@ void repartir_filho(NoB* pai, int i, int ordem){
 }
 
 void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
-	int i = no->n_nos;
+	int i = no->n_nos - 1;
 	if(no->folha){
 		while(i >= 0 && strcmp(no->chaves[i],chave) > 0){ //Isso pode estar errado
 			strcpy(no->chaves[i+1], no->chaves[i]);
@@ -106,17 +116,24 @@ void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
 void inserir_btree(Barv* arv, char* chave, int NRR){
   NoB* r = arv->raiz;
 
-  if(r->n_nos == 2*arv->ordem - 1){
-    NoB* s = aloca_no(arv->ordem);
-    arv->raiz = s;
-    s->folha = 0;
-    s->n_nos = 0;
-    s->filhos[0] = r;
-
-    repartir_filho(s, 0, arv->ordem);
-    insere_arvore_naocheia(s, chave, NRR, arv->ordem);
+  if(arv->raiz->n_nos == 0){
+    strcpy(arv->raiz->chaves[0], chave);
+    arv->raiz->NRR[0] = NRR;
+    arv->raiz->n_nos++;
   }
   else{
-    insere_arvore_naocheia(r, chave, NRR, arv->ordem);
-  }
+    if(r->n_nos == 2*arv->ordem - 1){
+      NoB* s = aloca_no(arv->ordem);
+      arv->raiz = s;
+      s->folha = 0;
+      s->n_nos = 0;
+      s->filhos[0] = r;
+
+      repartir_filho(s, 0, arv->ordem);
+      insere_arvore_naocheia(s, chave, NRR, arv->ordem);
+    }
+    else{
+      insere_arvore_naocheia(r, chave, NRR, arv->ordem);
+    }
+  } /* else */
 }

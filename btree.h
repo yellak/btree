@@ -14,7 +14,7 @@ typedef struct barv{
   int ordem;
 } Barv;
 
-void criar_arvore(Barv* arvore, int ordem);
+Barv* criar_arvore(int ordem);
 
 NoB* aloca_no(int ordem);
 
