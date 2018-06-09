@@ -32,3 +32,30 @@ NoB* aloca_no(int ordem){
 
   novo->filhos[i] = NULL;
 }
+
+void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
+	int i = no->n_nos;
+	if(no->folha){
+		while(i >= 0 && strcmp(no->chave[i],chave) > 0){ //Isso pode estar errado
+			strcpy(no->chave[i+1], no->chave[i]);
+			no->NRR[i+1] = no->NRR[i];
+			i--;
+		}
+		strcpy(no->chave[i+1], chave);
+		no->NRR[i+1] = NRR;
+		no->n_nos++;
+	}
+	else{
+		while(i >= 0 && strcmp(no->chave[i],chave) > 0){ //Isso pode estar errado
+			i--;
+		}
+		i++;
+		if(no->filhos[i]->n_nos == 2*ordem -1){
+			repartir_filho(no, i, ordem);
+			if(strcmp(no->chave[i],chave) < 0){ //Pode estar errado tbm
+				i = i + 1;
+			}			
+		}
+		insere_arvore_naocheia(no->filhos[i], chave, NRR, ordem);
+	}
+}
