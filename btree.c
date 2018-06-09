@@ -72,25 +72,6 @@ void repartir_filho(NoB* pai, int i, int ordem){
   pai->n_nos++;
 }
 
-/* Função que insere uma nova chave no nó */
-void inserir_btree(Barv* arv, char* chave, int NRR){
-  NoB* r = arv->raiz;
-
-  if(r->n_nos == 2*arv->ordem - 1){
-    NoB* s = aloca_no(arv->ordem);
-    arv->raiz = s;
-    s->folha = 0;
-    s->n_nos = 0;
-    s->filhos[0] = r;
-
-    repartir_filho(s, 0, arv->ordem);
-    insere_arvore_naocheia(s, chave, NRR, arv->ordem);
-  }
-  else{
-    insere_arvore_naocheia(r, chave, NRR, arv->ordem);
-  }
-}
-
 void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
 	int i = no->n_nos;
 	if(no->folha){
@@ -116,4 +97,23 @@ void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
 		}
 		insere_arvore_naocheia(no->filhos[i], chave, NRR, ordem);
 	}
+}
+
+/* Função que insere uma nova chave no nó */
+void inserir_btree(Barv* arv, char* chave, int NRR){
+  NoB* r = arv->raiz;
+
+  if(r->n_nos == 2*arv->ordem - 1){
+    NoB* s = aloca_no(arv->ordem);
+    arv->raiz = s;
+    s->folha = 0;
+    s->n_nos = 0;
+    s->filhos[0] = r;
+
+    repartir_filho(s, 0, arv->ordem);
+    insere_arvore_naocheia(s, chave, NRR, arv->ordem);
+  }
+  else{
+    insere_arvore_naocheia(r, chave, NRR, arv->ordem);
+  }
 }
