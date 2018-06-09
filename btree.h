@@ -16,4 +16,10 @@ typedef struct barv{
   int ordem;
 } Barv;
 
+void criar_arvore(Barv* arvore, int ordem);
+
+NoB* aloca_no(int ordem);
+
+void repartir_filho(NoB* pai, int i, int ordem);
+
 #endif
