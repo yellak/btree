@@ -8,14 +8,7 @@ int main(){
   char* nome_arq = "lista.txt";
 
   le_arquivo_cria_arvore(arv, nome_arq);
-  /*char c[] = "dbcdefgh";
-  char b[] = "cbcdefgh";
-  char a[] = "abcdefgh";
-  char d[] = "bbcdefgh";*/
-
-  /*inserir_btree(arv, c, 0);
-  inserir_btree(arv, b, 1);
-  inserir_btree(arv, a, 2);
-  inserir_btree(arv, d, 3);*/
+  libera_arvore(arv, arv->raiz);
+  free(arv);
   return 0;
 }

@@ -77,7 +77,7 @@ void repartir_filho(NoB* pai, int i, int ordem){
 
   pai->filhos[i + 1] = z;
 
-  for(j = pai->n_nos; j >= i; j--){
+  for(j = pai->n_nos - 1; j >= i; j--){
     strcpy(pai->chaves[j + 1], pai->chaves[j]);
   }
 
@@ -136,4 +136,23 @@ void inserir_btree(Barv* arv, char* chave, int NRR){
       insere_arvore_naocheia(r, chave, NRR, arv->ordem);
     }
   } /* else */
+}
+
+void libera_arvore(Barv* arv, NoB* raiz){
+  int i;
+
+  if(!raiz->folha){
+    for (i = 0; i < raiz->n_nos + 1; i++){
+      libera_arvore(arv, raiz->filhos[i]);
+    }
+  }
+
+  for(i = 0; i < 2*arv->ordem - 1; i++){
+    free(raiz->chaves[i]);
+  }
+
+  free(raiz->chaves);
+  free(raiz->NRR);
+  free(raiz->filhos);
+  free(raiz);
 }
