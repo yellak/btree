@@ -4,6 +4,7 @@
 #include "in-out.h"
 
 int main(){
+  /* Ordem é a quatidade mínima de filhos */
   int ordem = 2;
   Barv* arv = criar_arvore(ordem);
   char* nome_arq = "lista.txt";

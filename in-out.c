@@ -52,6 +52,7 @@ void ler_arquivo_cria_arvore(Barv* arv, char* nome_arq){
 	free(chave);
 }
 
+/* Função que salva os índices */
 int salvar_arvore(Barv* arv, NoB* raiz, FILE* fp){
   NoB* aux;
   int i = 0;
@@ -59,8 +60,8 @@ int salvar_arvore(Barv* arv, NoB* raiz, FILE* fp){
   int NRR_filhos[2*arv->ordem];
 
   if(raiz->filhos[0] != NULL){
-    for(aux = raiz->filhos[0], i = 0; i < raiz->n_nos + 1; i++, aux = raiz->filhos[i]){
-      NRR_filhos[i] = salvar_arvore(arv, aux, fp);
+    for(i = 0; i < raiz->n_nos + 1; i++){
+      NRR_filhos[i] = salvar_arvore(arv, raiz->filhos[i], fp);
     }
   }
   
@@ -70,14 +71,20 @@ int salvar_arvore(Barv* arv, NoB* raiz, FILE* fp){
 
   minha_posicao = ftell(fp)/50;
 
-  for(i = 0; i < raiz->n_nos; i++){
-    fprintf(fp, "%s %4d ", raiz->chaves[i], raiz->NRR[i]);
+  for(i = 0; i < 2*arv->ordem; i++){
+    if(i < raiz->n_nos){
+      fprintf(fp, "%s %4d ", raiz->chaves[i], raiz->NRR[i]);
+    }
+    else{
+      fprintf(fp, "************* ");
+    }
   }
 
   for(i = 0; i < 2*arv->ordem; i++){
     fprintf(fp, "%4d ", NRR_filhos[i]);
   }
 
+  fseek(fp, -1, SEEK_CUR);
   fprintf(fp, "\n");
 
   return minha_posicao;
