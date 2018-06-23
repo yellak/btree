@@ -5,8 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 
-char *strupr(char *str)
-{
+char *strupr(char *str){
   unsigned char *p = (unsigned char *)str;
 
   while (*p) {
