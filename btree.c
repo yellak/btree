@@ -79,9 +79,11 @@ void repartir_filho(NoB* pai, int i, int ordem){
 
   for(j = pai->n_nos - 1; j >= i; j--){
     strcpy(pai->chaves[j + 1], pai->chaves[j]);
+    pai->NRR[j + 1] = pai->NRR[j];
   }
 
   strcpy(pai->chaves[i], y->chaves[ordem - 1]);
+  pai->NRR[i] = y->NRR[ordem - 1];
   pai->n_nos++;
 }
 
