@@ -16,7 +16,7 @@ char *strupr(char *str){
   return str;
 }
 
-void le_arquivo_cria_arvore(Barv* arv, char* nome_arq){
+void ler_arquivo_cria_arvore(Barv* arv, char* nome_arq){
 
 	FILE* fp = fopen(nome_arq, "r");
 	int NRR = 0;
@@ -50,4 +50,35 @@ void le_arquivo_cria_arvore(Barv* arv, char* nome_arq){
 	}
 	fclose(fp);
 	free(chave);
+}
+
+int salvar_arvore(Barv* arv, NoB* raiz, FILE* fp){
+  NoB* aux;
+  int i = 0;
+  int minha_posicao;
+  int NRR_filhos[2*arv->ordem];
+
+  if(raiz->filhos[0] != NULL){
+    for(aux = raiz->filhos[0], i = 0; i < raiz->n_nos + 1; i++, aux = raiz->filhos[i]){
+      NRR_filhos[i] = salvar_arvore(arv, aux, fp);
+    }
+  }
+  
+  for( ; i < 2*arv->ordem; i++){
+    NRR_filhos[i] = -1;
+  }
+
+  minha_posicao = ftell(fp)/50;
+
+  for(i = 0; i < raiz->n_nos; i++){
+    fprintf(fp, "%s %4d ", raiz->chaves[i], raiz->NRR[i]);
+  }
+
+  for(i = 0; i < 2*arv->ordem; i++){
+    fprintf(fp, "%4d ", NRR_filhos[i]);
+  }
+
+  fprintf(fp, "\n");
+
+  return minha_posicao;
 }
