@@ -5,7 +5,7 @@
 
 int main(){
   /* Ordem é a quatidade mínima de filhos */
-  int ordem = 2;
+  int ordem = 1;
   Barv* arv = criar_arvore(ordem);
   char* nome_arq = "lista.txt";
   FILE* fp = fopen("indicelista.bt", "w");
@@ -22,7 +22,7 @@ int main(){
   inserir_btree(arv, c2, 4);
   inserir_btree(arv, c1, 5);
   
-  //ler_arquivo_cria_arvore(arv, nome_arq);
+  /* ler_arquivo_cria_arvore(arv, nome_arq); */
   salvar_arvore(arv, arv->raiz, fp);
   libera_arvore(arv, arv->raiz);
   free(arv);
