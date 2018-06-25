@@ -17,13 +17,13 @@ int main(){
   char c4[] = "dddddddd";
   char c5[] = "eeeeeeee";
 
-  inserir_btree(arv, c5, 1);
-  inserir_btree(arv, c4, 2);
-  inserir_btree(arv, c3, 3);
-  inserir_btree(arv, c2, 4);
-  inserir_btree(arv, c1, 5);
+  // inserir_btree(arv, c5, 1);
+  // inserir_btree(arv, c4, 2);
+  // inserir_btree(arv, c3, 3);
+  // inserir_btree(arv, c2, 4);
+  // inserir_btree(arv, c1, 5);
   
-  /* ler_arquivo_cria_arvore(arv, nome_arq); */
+  ler_arquivo_cria_arvore(arv, nome_arq);
   salvar_arvore(arv, arv->raiz, fp);
   libera_arvore(arv, arv->raiz);
   free(arv);
