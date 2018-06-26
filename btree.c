@@ -13,13 +13,13 @@ Barv* criar_arvore(int ordem){
   
 	//Alocação da raiz da árvore
 	arvore->raiz = (NoB*) malloc(sizeof(NoB));
-	arvore->raiz->chaves = (char**) malloc((2*ordem - 1)*sizeof(char*));
-	arvore->raiz->NRR = (int*) malloc((2*ordem - 1)*sizeof(int));
+	arvore->raiz->chaves = (char**) malloc((ordem - 1)*sizeof(char*));
+	arvore->raiz->NRR = (int*) malloc((ordem - 1)*sizeof(int));
 	arvore->raiz->folha = 1;
 	arvore->raiz->n_nos = 0;
-	arvore->raiz->filhos = (NoB**) malloc(2*ordem*sizeof(NoB*));
+	arvore->raiz->filhos = (NoB**) malloc(ordem*sizeof(NoB*));
 
-	for(i = 0; i < 2*ordem - 1; i++){
+	for(i = 0; i < ordem - 1; i++){
 		arvore->raiz->chaves[i] = (char*) malloc(T_CHAVE*sizeof(char));
 		arvore->raiz->filhos[i] = NULL;
 	}
@@ -34,11 +34,11 @@ Barv* criar_arvore(int ordem){
 NoB* aloca_no(int ordem){
 	int i;
 	NoB* novo = (NoB*) malloc(sizeof(NoB));
-	novo->chaves = (char**) malloc((2*ordem - 1)*sizeof(char*));
-	novo->NRR = (int*) malloc((2*ordem - 1)*sizeof(int));
-	novo->filhos = (NoB**) malloc(2*ordem*sizeof(NoB*));
+	novo->chaves = (char**) malloc((ordem - 1)*sizeof(char*));
+	novo->NRR = (int*) malloc((ordem - 1)*sizeof(int));
+	novo->filhos = (NoB**) malloc(ordem*sizeof(NoB*));
     
-	for(i = 0; i < 2*ordem - 1; i++){
+	for(i = 0; i < ordem - 1; i++){
 		novo->chaves[i] = (char*) malloc(T_CHAVE*sizeof(char));
 		novo->filhos[i] = NULL;
 	}
@@ -61,23 +61,23 @@ void repartir_filho(NoB* pai, int i, int ordem){
 	z->folha = y->folha;
 
 	//A quantidade de chaves de z será a quantidae mínima de chaves que um nó pode ter 
-	z->n_nos = ordem - 1;
+	z->n_nos = ordem/2 - 1;
 
 	//Transfere-se metade das chaves de y para z
-	for(j = 0; j < ordem - 1; j++){
-		strcpy(z->chaves[j], y->chaves[j + ordem]);
-		z->NRR[j] = y->NRR[j + ordem];
+	for(j = 0; j < ordem/2 - 1; j++){
+		strcpy(z->chaves[j], y->chaves[j + ordem/2]);
+		z->NRR[j] = y->NRR[j + ordem/2];
 	}
 
 	//Caso y não seja folha transfere-se metade dos filhos de z para y
 	if(!y->folha){
-		for(j = 0; j < ordem; j++){
-			z->filhos[j] = y->filhos[j + ordem];
+		for(j = 0; j < ordem/2; j++){
+			z->filhos[j] = y->filhos[j + ordem/2];
 		}
 	}
 
 	//A quantidade de chaves de y também será a quantidade mínima de chaves que um nó pode ter
-	y->n_nos = ordem - 1;
+	y->n_nos = ordem/2 - 1;
 
 	//Reorganiza-se os filhos do nó pai para inserir o novo filho 
 	for(j = pai->n_nos; j >= i + 1; j--){
@@ -94,8 +94,8 @@ void repartir_filho(NoB* pai, int i, int ordem){
 	}
 
 	//Insere-se no nó pai, a chave promovida
-	strcpy(pai->chaves[i], y->chaves[ordem - 1]);
-	pai->NRR[i] = y->NRR[ordem - 1];
+	strcpy(pai->chaves[i], y->chaves[ordem/2 - 1]);
+	pai->NRR[i] = y->NRR[ordem/2 - 1];
 	pai->n_nos++;
 }
 
@@ -109,7 +109,7 @@ void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
 
 		//Percorre as chaves do final para o começo até encontrar a posição certa de inserir a chave ou chegar à ultima chave 
 		//Enquanto percorre, vai passando todas as chaves para a posição à direita
-		while(i >= 0 && strcmp(no->chaves[i],chave) > 0){ 
+		while(i >= 0 && strcmp(no->chaves[i], chave) > 0){ 
 			strcpy(no->chaves[i+1], no->chaves[i]);
 			no->NRR[i+1] = no->NRR[i];
 			i--;
@@ -131,7 +131,7 @@ void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
 		i++;
 
 		//Caso em que deseja-se inserir a nova chave em um filho cheio
-		if(no->filhos[i]->n_nos == 2*ordem -1){
+		if(no->filhos[i]->n_nos == ordem -1){
 
 			//Reparte-se o filho parra caber a nova chave
 			repartir_filho(no, i, ordem);
@@ -139,7 +139,7 @@ void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
 			//Decide-se quais dos dois novos filhos iremos entrar para inserir a nova chave
 			if(strcmp(no->chaves[i], chave) < 0){ 
 				i = i + 1;
-			}			
+			}
 		}
 
 		//Insere-se a chave no filho decidido no if anterior
@@ -163,7 +163,7 @@ void inserir_btree(Barv* arv, char* chave, int NRR){
 	else{
 
 		//Caso em que o nó raiz está cheio
-		if(r->n_nos == 2*arv->ordem - 1){
+		if(r->n_nos == arv->ordem - 1){
 
 			//Criação de um novo nó que se tornará a nova raiz
 			NoB* s = aloca_no(arv->ordem);
@@ -197,7 +197,7 @@ void libera_arvore(Barv* arv, NoB* raiz){
 		}
 	}
 
-	for(i = 0; i < 2*arv->ordem - 1; i++){
+	for(i = 0; i < arv->ordem - 1; i++){
 		free(raiz->chaves[i]);
 	}
 
