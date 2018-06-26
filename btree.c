@@ -62,17 +62,17 @@ void repartir_filho(NoB* pai, int i, int ordem){
 	z->folha = y->folha;
 
 	//A quantidade de chaves de z será a quantidae mínima de chaves que um nó pode ter 
-	z->n_nos = ceil(ordem/2) - 1;
+	z->n_nos = ceil((double)ordem/2) - 1;
 
 	//Transfere-se metade das chaves de y para z
-	for(j = 0; j < (int)ceil(ordem/2) - 1; j++){
+	for(j = 0; j < (int)ceil((double)ordem/2) - 1; j++){
 		strcpy(z->chaves[j], y->chaves[j + (int)(ordem/2)]);
 		z->NRR[j] = y->NRR[j + (int)(ordem/2)];
 	}
 
 	//Caso y não seja folha transfere-se metade dos filhos de z para y
 	if(!y->folha){
-		for(j = 0; j < (int)ceil(ordem/2); j++){
+		for(j = 0; j < (int)((ordem + 1)/2); j++){
 			z->filhos[j] = y->filhos[j + (int)(ordem/2)];
 		}
 	}
