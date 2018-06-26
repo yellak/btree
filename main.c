@@ -6,7 +6,7 @@
 int main(){
 
 	/* Ordem é a quatidade mínima de filhos */
-	int ordem = 4;
+	int ordem = 2;
 	Barv* arv = criar_arvore(ordem);
 	char* nome_arq = "lista.txt";
 	FILE* fp = fopen("indicelista.bt", "w");
