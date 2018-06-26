@@ -68,7 +68,7 @@ int salvar_arvore(Barv* arv, NoB* raiz, FILE* fp){
 		NRR_filhos[i] = -1;
 	}
 
-	minha_posicao = ftell(fp)/(14*(ordem - 1) + 5*ordem);
+	minha_posicao = ftell(fp)/(14*(arv->ordem - 1) + 5*arv->ordem);
 
 	for(i = 0; i < arv->ordem - 1; i++){
 		if(i < raiz->n_nos){
