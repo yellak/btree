@@ -6,14 +6,14 @@
 #include <ctype.h>
 
 char *strupr(char *str){
-  unsigned char *p = (unsigned char *)str;
+	unsigned char *p = (unsigned char *)str;
 
-  while (*p) {
-     *p = toupper(*p);
-      p++;
-  }
+	while (*p) {
+		*p = toupper(*p);
+		p++;
+	}
 
-  return str;
+	return str;
 }
 
 void ler_arquivo_cria_arvore(Barv* arv, char* nome_arq){
@@ -54,37 +54,37 @@ void ler_arquivo_cria_arvore(Barv* arv, char* nome_arq){
 
 /* Função que salva os índices */
 int salvar_arvore(Barv* arv, NoB* raiz, FILE* fp){
-  NoB* aux;
-  int i = 0;
-  int minha_posicao;
-  int NRR_filhos[2*arv->ordem];
+	NoB* aux;
+	int i = 0;
+	int minha_posicao;
+	int NRR_filhos[2*arv->ordem];
 
-  while((raiz->filhos[i] != NULL) && (i < raiz->n_nos + 1)){
-    NRR_filhos[i] = salvar_arvore(arv, raiz->filhos[i], fp);
-    i++;
-  }
+	while((raiz->filhos[i] != NULL) && (i < raiz->n_nos + 1)){
+		NRR_filhos[i] = salvar_arvore(arv, raiz->filhos[i], fp);
+		i++;
+	}
   
-  for( ; i < 2*arv->ordem; i++){
-    NRR_filhos[i] = -1;
-  }
+	for( ; i < 2*arv->ordem; i++){
+		NRR_filhos[i] = -1;
+	}
 
-  minha_posicao = ftell(fp)/50;
+	minha_posicao = ftell(fp)/50;
 
-  for(i = 0; i < 2*arv->ordem - 1; i++){
-    if(i < raiz->n_nos){
-      fprintf(fp, "%s %4d ", raiz->chaves[i], raiz->NRR[i]);
-    }
-    else{
-      fprintf(fp, "************* ");
-    }
-  }
+	for(i = 0; i < 2*arv->ordem - 1; i++){
+		if(i < raiz->n_nos){
+			fprintf(fp, "%s %4d ", raiz->chaves[i], raiz->NRR[i]);
+		}
+		else{
+			fprintf(fp, "************* ");
+		}
+	}
 
-  for(i = 0; i < 2*arv->ordem; i++){
-    fprintf(fp, "%4d ", NRR_filhos[i]);
-  }
+	for(i = 0; i < 2*arv->ordem; i++){
+		fprintf(fp, "%4d ", NRR_filhos[i]);
+	}
 
-  fseek(fp, -1, SEEK_CUR);
-  fprintf(fp, "\n");
+	fseek(fp, -1, SEEK_CUR);
+	fprintf(fp, "\n");
 
-  return minha_posicao;
+	return minha_posicao;
 }
