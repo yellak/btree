@@ -101,7 +101,7 @@ void repartir_filho(NoB* pai, int i, int ordem){
 }
 
 void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
-	
+
 	//Numero de nós é decrementado por 1 pois em C vetores começam em 0
 	int i = no->n_nos - 1;
 
@@ -110,7 +110,7 @@ void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
 
 		//Percorre as chaves do final para o começo até encontrar a posição certa de inserir a chave ou chegar à ultima chave 
 		//Enquanto percorre, vai passando todas as chaves para a posição à direita
-		while(i >= 0 && strcmp(no->chaves[i], chave) > 0){ 
+		while(i >= 0 && strcmp(no->chaves[i], chave) > 0){
 			strcpy(no->chaves[i+1], no->chaves[i]);
 			no->NRR[i+1] = no->NRR[i];
 			i--;
@@ -150,7 +150,7 @@ void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
 
 /* Função que insere uma nova chave no nó */
 void inserir_btree(Barv* arv, char* chave, int NRR){
-  
+
 	NoB* r = arv->raiz;
 
 	//Caso em que deseja-se inserir um novo nó em uma raiz vazia

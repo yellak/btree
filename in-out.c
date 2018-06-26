@@ -70,6 +70,7 @@ int salvar_arvore(Barv* arv, NoB* raiz, FILE* fp){
 
 	minha_posicao = ftell(fp)/(14*(arv->ordem - 1) + 5*arv->ordem);
 
+
 	for(i = 0; i < arv->ordem - 1; i++){
 		if(i < raiz->n_nos){
 			fprintf(fp, "%s %4d ", raiz->chaves[i], raiz->NRR[i]);
