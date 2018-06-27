@@ -39,7 +39,9 @@ int main(){
 		switch(escolha)
 			{
 			case 0:
-				printf("Digite o nome do novo registro:\n");
+				insere_novo_registro(arv,nome_arq);
+				salvar_arvore(arv, arv->raiz, fp);
+				ImprimirArquivo(fp);
 				break;
 			case 1:
 				printf("Qual a primeira letra do registro que você deseja excluir?\n");

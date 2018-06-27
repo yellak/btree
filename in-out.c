@@ -97,3 +97,67 @@ void ImprimirArquivo(FILE* fp){
 		putchar(c);
 	}
 }
+
+//Função responsavel por receber uma string e preencher o resto do seu espaço com espaço(" ") para facilitar a criação de chaves
+char* PreencheComEspaco(char* string, int tamanho){
+	size_t prevlen = strlen(string);
+	memset(string + prevlen,' ',tamanho - 1 - prevlen);
+	string[tamanho-1] = '\0';
+	return string;
+}
+
+void insere_novo_registro(Barv* arv, char* nome_arq){
+	char* nome = (char*)malloc(41*sizeof(char));
+	char* matricula = (char*)malloc(7*sizeof(char));
+	char* curso = (char*)malloc(4*sizeof(char));
+	char* turma = (char*)malloc(2*sizeof(char));
+	char* chave = (char*)malloc(9*sizeof(char));
+	int NRR;
+
+	printf("Digite o nome do novo registro:\n");
+	scanf("\n%[^\n]",nome);
+
+	printf("Digite a matrícula do novo registro:\n");
+	scanf("%s",matricula);	
+
+	printf("Digite o curso do novo registro:\n");
+	scanf("%s",curso);
+
+	printf("Digite a turma do novo registro:\n");
+	scanf("%s",turma);
+
+	FILE* fp = fopen(nome_arq,"a+");
+
+	nome = PreencheComEspaco(nome, 41);
+	matricula = PreencheComEspaco(matricula, 7);
+	curso = PreencheComEspaco(curso, 4);
+	turma = PreencheComEspaco(turma, 2);
+
+	fseek(fp, 0, SEEK_END);
+
+	NRR = ftell(fp)/(14*(2*arv->ordem - 1) + 5*arv->ordem) - 1;
+	fprintf(fp, "%s %s %s %s\n",nome, matricula, curso,turma);
+
+	for(int i = 0; i < 3; i++){
+		chave[i] = nome[i];
+	}
+
+	chave = strupr(chave);
+
+	for(int i = 0; i < 5; i++){
+		chave[i+3] = matricula[i];
+	}
+
+	chave[8] = '\0';
+
+	inserir_btree(arv, chave, NRR);
+
+	free(chave);
+	free(nome);
+	free(matricula);
+	free(curso);
+	free(turma);
+	free(chave);
+
+	fclose(fp);
+}
