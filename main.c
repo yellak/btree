@@ -4,29 +4,53 @@
 #include "in-out.h"
 
 int main(){
-
-	/* Ordem é a quatidade mínima de filhos */
-	int ordem = 3;
-	Barv* arv = criar_arvore(ordem);
+	Barv* arv;
 	char* nome_arq = "lista.txt";
-	FILE* fp = fopen("indicelista.bt", "w");
+	char* nome_indice = "indicelista.bt";
+	FILE* fp = fopen(nome_indice, "w+");
 
-	char c1[] = "aaaaaaaa";
-	char c2[] = "bbbbbbbb";
-	char c3[] = "cccccccc";
-	char c4[] = "dddddddd";
-	char c5[] = "eeeeeeee";
+	int ordem;
+	printf("\nInsira a ordem desejada para a árvore:\n");
+	scanf("%d", &ordem);
+	arv = criar_arvore(ordem);
 
-	/* 
-	 * inserir_btree(arv, c5, 1);
-	 * inserir_btree(arv, c4, 2);
-	 * inserir_btree(arv, c3, 3);
-	 * inserir_btree(arv, c2, 4);
-	 * inserir_btree(arv, c1, 5);
-	 */
-  
+	/* Lendo o arquivo, criando a árvore e salvando ela */
 	ler_arquivo_cria_arvore(arv, nome_arq);
 	salvar_arvore(arv, arv->raiz, fp);
+
+	/* Imprimindo o arquivo resultante na tela */
+	printf("\nArquivo com a árvore-B criada:\n\n");
+	ImprimirArquivo(fp);
+
+	int escolha;
+	do{
+		printf("\n#######################################################\n");
+		printf("Que operação você deseja fazer agora?\n");
+		printf("0. Adicionar um novo registro\n");
+		printf("1. Remover um registro existente\n");
+		printf("2. Fazer a busca de um novo registro\n");
+		printf("3. Sair\n");
+
+		do{
+			printf("Escolha uma opção válida:\n");
+			scanf("%d", &escolha);
+		} while(escolha < 0 || escolha > 3);
+
+		switch(escolha)
+			{
+			case 0:
+				printf("Digite o nome do novo registro:\n");
+				break;
+			case 1:
+				printf("Qual a primeira letra do registro que você deseja excluir?\n");
+				break;
+			case 2:
+				printf("Qual a chave do registro que você deseja pesquisar?\n");
+				break;
+			}
+	} while(escolha != 3);
+
+	/* Liberando todo o espaço alocado em memória */
 	libera_arvore(arv, arv->raiz);
 	free(arv);
 	fclose(fp);

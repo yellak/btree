@@ -90,7 +90,6 @@ int salvar_arvore(Barv* arv, NoB* raiz, FILE* fp){
 	return minha_posicao;
 }
 
-
 void ImprimirArquivo(FILE* fp){
 	int c;
 	rewind(fp);
