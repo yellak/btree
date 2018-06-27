@@ -12,7 +12,7 @@ int main(){
 	int ordem;
 	printf("\nInsira a ordem desejada para a árvore:\n");
 	scanf("%d", &ordem);
-	arv = criar_arvore(ordem);
+	arv = criar_arvore(ordem/2);
 
 	/* Lendo o arquivo, criando a árvore e salvando ela */
 	ler_arquivo_cria_arvore(arv, nome_arq);
