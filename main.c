@@ -40,6 +40,9 @@ int main(){
 			{
 			case 0:
 				insere_novo_registro(arv,nome_arq);
+
+				//Voltando para o começo do arquivo
+				fseek(fp, 0, SEEK_SET);	
 				salvar_arvore(arv, arv->raiz, fp);
 				ImprimirArquivo(fp);
 				break;
