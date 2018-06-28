@@ -89,6 +89,7 @@ int main(){
 				} while(strlen(chave) > 8);
 
 				remove_registo(nome_arq, chave, ordem, arv, fp);
+
 				salvar_arvore(arv, arv->raiz, fp);
 				ImprimirArquivo(fp);
 
