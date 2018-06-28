@@ -15,4 +15,8 @@ void insere_novo_registro(Barv* arv, char* nome_arq);
 
 void ImprimirArquivo(FILE* fp);
 
+NoB* ler_registro_ind(FILE* fp, int NRR[], int ordem);
+
+int busca_chave(FILE* fp, char* chave, int ordem, int* n_seeks);
+
 #endif

@@ -5,6 +5,8 @@
 #include <string.h>
 #include <ctype.h>
 
+//const int T_CHAVE = 9;
+
 char *strupr(char *str){
 	unsigned char *p = (unsigned char *)str;
 
@@ -14,6 +16,35 @@ char *strupr(char *str){
 	}
 
 	return str;
+}
+
+NoB* ler_registro_ind(FILE* fp, int NRR[], int ordem){
+	int TAM_REG = 14*(ordem - 1) + 5*ordem;
+	int i, j;
+	char chave_aux[14];
+
+	NoB* no = aloca_no(ordem);
+
+	for(i = 0; i < ordem - 1; i++){
+		fscanf(fp, "%s", chave_aux);
+		if(chave_aux[0] != '*'){
+			for(j = 0; j < 9; j++){
+				no->chaves[i][j] = chave_aux[j];
+			}
+			no->chaves[i][8] = '\0';
+			fscanf(fp, "%d ", &no->NRR[i]);
+		}
+		else{
+			strcpy(no->chaves[i], "********");
+			no->NRR[i] = -1;
+		}
+	}
+
+	for(i = 0; i < ordem; i++){
+		fscanf(fp, "%d", &NRR[i]);
+	}
+
+	return no;
 }
 
 void ler_arquivo_cria_arvore(Barv* arv, char* nome_arq){
@@ -167,4 +198,38 @@ void insere_novo_registro(Barv* arv, char* nome_arq){
 	free(turma);
 
 	fclose(fp);
+}
+
+int busca_chave(FILE* fp, char* chave, int ordem, int* n_seeks){
+	int TAM_REG = 14*(ordem - 1) + 5*ordem;
+	int continua = 1, NRR[ordem], i;
+	fseek(fp, - TAM_REG - 1, SEEK_END);
+
+	*n_seeks = 1;
+
+	while(continua)
+		{
+			i = 0;
+			NoB* no = ler_registro_ind(fp, NRR, ordem);
+
+			while(i < ordem -1){
+				/* Se for maior que zero a primeira chave é depois da ordem alfabetica */
+				if(strcmp(no->chaves[i], chave) == 0){
+					return no->NRR[i];
+				}
+				else if(strcmp(chave, no->chaves[i]) < 0){
+					fseek(fp, NRR[i]*TAM_REG, SEEK_SET);
+					*n_seeks += 1;
+					break;
+				}
+				else{
+					i++;
+					if(i == ordem - 1){
+						continua = 0;
+					}
+				}
+			}
+		} /* while(!achou) */
+	
+	return -1;
 }

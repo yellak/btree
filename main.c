@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #include "btree.h"
 #include "in-out.h"
 
@@ -17,7 +18,17 @@ int main(){
 	char* nome_indice = "indicelista.bt";
 	FILE* fp = fopen(nome_indice, "w+");
 
+	int n_seeks, posicao;
+	char chave[9];
+
 	inicio();
+
+	/* 
+	 * FILE* r = fopen(nome_indice, "r");
+	 * char g[] = "AAD12345";
+	 * int b = 4;
+	 * int pos = busca_chave(r, g, b);
+	 */
 	
 	int ordem;
 	printf("\nInsira a ordem desejada para a árvore:\n");
@@ -76,6 +87,13 @@ int main(){
 				break;
 			case 3:
 				printf("Qual a chave do registro que você deseja pesquisar?\n");
+				do{
+					scanf("%s", chave);
+				} while(strlen(chave) > 8);
+
+				posicao = busca_chave(fp, chave, ordem, &n_seeks);
+
+				printf("nrr: %d seeks: %d", posicao, n_seeks);
 				break;
 			}
 	} while(escolha != 0);
