@@ -114,17 +114,25 @@ void insere_novo_registro(Barv* arv, char* nome_arq){
 	char* chave = (char*)malloc(9*sizeof(char));
 	int NRR;
 
-	printf("Digite o nome do novo registro:\n");
-	scanf("\n%[^\n]",nome);
+	do{
+	printf("Digite o nome do novo registro (Até 40 caracteres):\n");
+	scanf("\n%[^\n]", nome);
+	} while(strlen(nome) > 40);
 
+	do{
 	printf("Digite a matrícula do novo registro:\n");
-	scanf("%s",matricula);	
+	scanf("%s", matricula);
+	} while(strlen(matricula) > 7);
 
-	printf("Digite o curso do novo registro:\n");
+	do{
+	printf("Digite o curso do novo registro (2 caracteres):\n");
 	scanf("%s",curso);
+	} while(strlen(curso) > 2);
 
-	printf("Digite a turma do novo registro:\n");
-	scanf("%s",turma);
+	do{
+		printf("Digite a turma do novo registro (1 caracter):\n");
+		scanf("%s", turma);
+	} while(strlen(turma) > 1);
 
 	FILE* fp = fopen(nome_arq,"a+");
 
@@ -157,7 +165,6 @@ void insere_novo_registro(Barv* arv, char* nome_arq){
 	free(matricula);
 	free(curso);
 	free(turma);
-	free(chave);
 
 	fclose(fp);
 }
