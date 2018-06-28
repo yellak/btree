@@ -90,6 +90,12 @@ int main(){
 
 				remove_registo(nome_arq, chave, ordem, arv, fp);
 
+				libera_arvore(arv, arv->raiz);
+				free(arv);
+				arv = criar_arvore(ordem);
+				ler_arquivo_cria_arvore(arv, nome_arq);
+
+				rewind(fp);
 				salvar_arvore(arv, arv->raiz, fp);
 				ImprimirArquivo(fp);
 

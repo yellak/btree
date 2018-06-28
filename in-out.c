@@ -261,10 +261,7 @@ void remove_registo(char* nome_arq, char* chave, int ordem, Barv* arv, FILE* ind
 
 	fputc('*', fp);
 
-	libera_arvore(arv, arv->raiz);
-	fclose(fp);
 
-	arv = criar_arvore(ordem);
-	ler_arquivo_cria_arvore(arv, nome_arq);
+	fclose(fp);
 
 }
