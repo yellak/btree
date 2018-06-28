@@ -202,7 +202,7 @@ void insere_novo_registro(Barv* arv, char* nome_arq){
 
 int busca_chave(FILE* fp, char* chave, int ordem, int* n_seeks){
 	int TAM_REG = 14*(ordem - 1) + 5*ordem;
-	int continua = 1, NRR[ordem], i;
+	int continua = 1, NRR[ordem], i, j;
 	fseek(fp, - TAM_REG - 1, SEEK_END);
 
 	*n_seeks = 1;
@@ -236,6 +236,15 @@ int busca_chave(FILE* fp, char* chave, int ordem, int* n_seeks){
 					}
 				}
 			}
+
+			for(j = 0; j < ordem - 1; j++){
+				free(no->chaves[j]);
+			}
+
+			free(no->chaves);
+			free(no->NRR);
+			free(no->filhos);
+			free(no);
 		} /* while(!achou) */
 	
 	return -1;
