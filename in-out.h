@@ -19,4 +19,6 @@ NoB* ler_registro_ind(FILE* fp, int NRR[], int ordem);
 
 int busca_chave(FILE* fp, char* chave, int ordem, int* n_seeks);
 
+void remove_registo(char* nome_arq, char* chave, int ordem, Barv* arv, FILE* ind);
+
 #endif

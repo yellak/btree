@@ -218,9 +218,16 @@ int busca_chave(FILE* fp, char* chave, int ordem, int* n_seeks){
 					return no->NRR[i];
 				}
 				else if(strcmp(chave, no->chaves[i]) < 0){
-					fseek(fp, NRR[i]*TAM_REG, SEEK_SET);
-					*n_seeks += 1;
-					break;
+
+					if(NRR[i] != -1){
+						fseek(fp, NRR[i]*TAM_REG, SEEK_SET);
+						*n_seeks += 1;
+						break;
+					}
+
+					else{
+						return -1;
+					}
 				}
 				else{
 					i++;
@@ -232,4 +239,23 @@ int busca_chave(FILE* fp, char* chave, int ordem, int* n_seeks){
 		} /* while(!achou) */
 	
 	return -1;
+}
+
+void remove_registo(char* nome_arq, char* chave, int ordem, Barv* arv, FILE* ind){
+	FILE* fp = fopen(nome_arq, "r");
+
+	int NRR[ordem];
+	int nseeks;
+	int pos = busca_chave(ind, chave, ordem, &nseeks);
+
+	fseek(fp, ((14*(arv->ordem - 1) + 5*arv->ordem) - 1)*pos, SEEK_SET);
+
+	fputc('*', fp);
+
+	libera_arvore(arv, arv->raiz);
+	fclose(fp);
+
+	arv = criar_arvore(ordem);
+	ler_arquivo_cria_arvore(arv, nome_arq);
+
 }

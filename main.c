@@ -84,6 +84,14 @@ int main(){
 				break;
 			case 2:
 				printf("Qual a primeira letra do registro que você deseja excluir?\n");
+				do{
+					scanf("%s", chave);
+				} while(strlen(chave) > 8);
+
+				remove_registo(nome_arq, chave, ordem, arv, fp);
+				salvar_arvore(arv, arv->raiz, fp);
+				ImprimirArquivo(fp);
+
 				break;
 			case 3:
 				printf("Qual a chave do registro que você deseja pesquisar?\n");
