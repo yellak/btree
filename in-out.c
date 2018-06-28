@@ -60,19 +60,21 @@ void ler_arquivo_cria_arvore(Barv* arv, char* nome_arq){
 		fseek(fp, 54*NRR, SEEK_SET);
 		fgets(str, 54, fp);
 
-		for(j = 0; j < 3; j++){
-			chave[j] = str[j];
+		if(str[0] != '*'){
+			for(j = 0; j < 3; j++){
+				chave[j] = str[j];
+			}
+
+			chave = strupr(chave);
+
+			for(j = 0; j < 5; j++){
+				chave[j + 3] = str[41 + j];
+			}
+
+			chave[8] = '\0';
+
+			inserir_btree(arv, chave, NRR);
 		}
-
-		chave = strupr(chave);
-
-		for(j = 0; j < 5; j++){
-			chave[j + 3] = str[41 + j];
-		}
-
-		chave[8] = '\0';
-
-		inserir_btree(arv, chave, NRR);
 		
 		ch = fgetc(fp);
 		ch = fgetc(fp);
@@ -213,24 +215,33 @@ int busca_chave(FILE* fp, char* chave, int ordem, int* n_seeks){
 			NoB* no = ler_registro_ind(fp, NRR, ordem);
 
 			while(i < ordem -1){
-				/* Se for maior que zero a primeira chave é depois da ordem alfabetica */
+				/* Se for 0 achamos a chave */
 				if(strcmp(no->chaves[i], chave) == 0){
 					return no->NRR[i];
 				}
+				/* Se for menor que zero chave vem antes da segunda na ordem alfabética */
 				else if(strcmp(chave, no->chaves[i]) < 0){
-
+					/* Caso ela tenha um filho damos um fseek até ele (filho à esquerda) */
 					if(NRR[i] != -1){
 						fseek(fp, NRR[i]*TAM_REG, SEEK_SET);
 						*n_seeks += 1;
 						break;
 					}
-
+					/* Se não, a chave não existe mais */
 					else{
 						return -1;
 					}
 				}
+				/* Se for maior chave vem depois */
 				else{
+					/* Se a próxima chave não existe damos fseek no filho a direita da chave atual*/
+					if(no->chaves[i + 1][0] == '*'){
+						fseek(fp, NRR[i + 1]*TAM_REG, SEEK_SET);
+						*n_seeks += 1;
+						break;
+					}
 					i++;
+					/* Caso percorramos todas as chaves do nó */
 					if(i == ordem - 1){
 						continua = 0;
 					}
@@ -257,10 +268,13 @@ void remove_registo(char* nome_arq, char* chave, int ordem, Barv* arv, FILE* ind
 	int nseeks;
 	int pos = busca_chave(ind, chave, ordem, &nseeks);
 
+	if(pos == -1){
+		printf("Chave não encontrada\n");
+		return;
+	}
 	fseek(fp, 54*pos, SEEK_SET);
 
 	fputc('*', fp);
-
 
 	fclose(fp);
 

@@ -95,7 +95,9 @@ int main(){
 				arv = criar_arvore(ordem);
 				ler_arquivo_cria_arvore(arv, nome_arq);
 
-				rewind(fp);
+				fclose(fp);
+				remove(nome_indice);
+				fp = fopen(nome_indice, "w+");
 				salvar_arvore(arv, arv->raiz, fp);
 				ImprimirArquivo(fp);
 
