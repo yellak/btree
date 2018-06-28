@@ -57,21 +57,21 @@ int salvar_arvore(Barv* arv, NoB* raiz, FILE* fp){
 	NoB* aux;
 	int i = 0;
 	int minha_posicao;
-	int NRR_filhos[2*arv->ordem];
+	int NRR_filhos[arv->ordem];
 
 	while((raiz->filhos[i] != NULL) && (i < raiz->n_nos + 1)){
 		NRR_filhos[i] = salvar_arvore(arv, raiz->filhos[i], fp);
 		i++;
 	}
   
-	for( ; i < 2*arv->ordem; i++){
+	for( ; i < arv->ordem; i++){
 		NRR_filhos[i] = -1;
 	}
 
-	minha_posicao = ftell(fp)/(14*(2*arv->ordem - 1) + 5*arv->ordem);
+	minha_posicao = ftell(fp)/(14*(arv->ordem - 1) + 5*arv->ordem);
 
 
-	for(i = 0; i < 2*arv->ordem - 1; i++){
+	for(i = 0; i < arv->ordem - 1; i++){
 		if(i < raiz->n_nos){
 			fprintf(fp, "%s %4d ", raiz->chaves[i], raiz->NRR[i]);
 		}
@@ -80,7 +80,7 @@ int salvar_arvore(Barv* arv, NoB* raiz, FILE* fp){
 		}
 	}
 
-	for(i = 0; i < 2*arv->ordem; i++){
+	for(i = 0; i < arv->ordem; i++){
 		fprintf(fp, "%4d ", NRR_filhos[i]);
 	}
 
@@ -143,7 +143,7 @@ void insere_novo_registro(Barv* arv, char* nome_arq){
 
 	fseek(fp, 0, SEEK_END);
 
-	NRR = ftell(fp)/(14*(2*arv->ordem - 1) + 5*arv->ordem) - 1;
+	NRR = ftell(fp)/(14*(arv->ordem - 1) + 5*arv->ordem) - 1;
 	fprintf(fp, "%s %s %s %s\n",nome, matricula, curso,turma);
 
 	for(int i = 0; i < 3; i++){

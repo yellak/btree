@@ -30,7 +30,7 @@ int main(){
 	/* O algoritmo usado cria a árvore baseado na quantidade mínima de filhos
        que um nó pode ter, por isso é mandado a quantidade mínima de filhos
        para a função */
-	arv = criar_arvore(ceil((double)ordem/2));
+	arv = criar_arvore(ordem);
 
 	/* Lendo o arquivo, criando a árvore e salvando ela */
 	ler_arquivo_cria_arvore(arv, nome_arq);
