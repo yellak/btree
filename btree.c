@@ -199,12 +199,14 @@ void inserir_btree(Barv* arv, char* chave, int NRR){
 void libera_arvore(Barv* arv, NoB* raiz){
 	int i;
 
+	/* Iteração para liberar todos os filhos de um nó recursivamente */
 	if(!raiz->folha){
 		for (i = 0; i < raiz->n_nos + 1; i++){
 			libera_arvore(arv, raiz->filhos[i]);
 		}
 	}
 
+	/* Loop para liberar todos as chaves de um nó */
 	for(i = 0; i < arv->ordem - 1; i++){
 		free(raiz->chaves[i]);
 	}

@@ -2,16 +2,16 @@
 #define __BTREE__H_
 
 typedef struct nob{
-  char **chaves;
-  int *NRR;
-  int folha;
-  int n_nos;
-  struct nob** filhos;
+  char **chaves; /* Vetor de strings que contem as chaves de um nó */
+  int *NRR; /* Vetor de inteiros que armazena os nrrs dos registros */
+  int folha; /* Variável booleana que define se um nó é folha ou não */
+  int n_nos; /* Variável que armazena o número de chaves no nó */
+  struct nob** filhos; /* Vetor de ponteiros para nós filhos */
 } NoB;
 
 typedef struct barv{
-  NoB* raiz;
-  int ordem;
+  NoB* raiz; /* Ponteiro para a raíz da árvore */
+  int ordem; /* Inteiro que armazena a ordem da árvore */
 } Barv;
 
 Barv* criar_arvore(int ordem);

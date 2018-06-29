@@ -7,6 +7,7 @@
 
 const int TAM_REG_DADOS = 54;
 
+/* Função que converte as letras minúsculas de uma string em maiúsculas */
 char *strupr(char *str){
 	unsigned char *p = (unsigned char *)str;
 
@@ -18,6 +19,7 @@ char *strupr(char *str){
 	return str;
 }
 
+/* Função que aloca um registro lido do arquivo */
 Registro* aloca_registro(void){
 	Registro* novo = (Registro*) malloc(sizeof(Registro));
 	novo->nome = (char*)malloc(41*sizeof(char));
@@ -28,6 +30,7 @@ Registro* aloca_registro(void){
 	return novo;
 }
 
+/* Função que libera um registro */
 void libera_registro(Registro* reg){
 	free(reg->nome);
 	free(reg->matricula);
@@ -36,27 +39,34 @@ void libera_registro(Registro* reg){
 	free(reg);
 }
 
+/* Função que lê um registro do arquivo de dados com base no NRR mandado */
 void ler_registro_dados(FILE* fp, Registro* reg, int NRR){
 	char registro[TAM_REG_DADOS];
 	int i;
+
+	/* Busca-se a posição do registro */
 	fseek(fp, TAM_REG_DADOS*NRR, SEEK_SET);
 	fgets(registro, TAM_REG_DADOS, fp);
 
+	/* O nome são os s40 primeiros caracteres da linha */
 	for(i = 0; i < 40; i++){
 		reg->nome[i] = registro[i];
 	}
 	reg->nome[40] = '\0';
 
+	/* A matricula são os 6 caracteres seguintes */
 	for(i = 0; i < 6; i++){
 		reg->matricula[i] = registro[i + 41];
 	}
 	reg->matricula[6] = '\0';
 
+	/* O curso são os 4 caracteres seguintes */
 	for(i = 0; i < 4; i++){
 		reg->curso[i] = registro[i + 48];
 	}
 	reg->curso[3] = '\0';
 
+	/* A turma é o último caracter da linha */
 	reg->turma[0] = registro[52];
 	reg->turma[1] = '\0';
 }
