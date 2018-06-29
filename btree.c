@@ -20,11 +20,13 @@ Barv* criar_arvore(int ordem){
 	arvore->raiz->n_nos = 0;
 	arvore->raiz->filhos = (NoB**) malloc(ordem*sizeof(NoB*));
 
+	//Alocação de cada uma das strings das chaves e inicializando os filhos com NULL 
 	for(i = 0; i < ordem - 1; i++){
 		arvore->raiz->chaves[i] = (char*) malloc(T_CHAVE*sizeof(char));
 		arvore->raiz->filhos[i] = NULL;
 	}
 
+	//Inicizalização do último filho com NULL
 	arvore->raiz->filhos[i] = NULL;
   
 	arvore->ordem = ordem;
@@ -39,24 +41,26 @@ NoB* aloca_no(int ordem){
 	novo->NRR = (int*) malloc((ordem - 1)*sizeof(int));
 	novo->filhos = (NoB**) malloc(ordem*sizeof(NoB*));
     
+	//Alocação de cada uma das strings das chaves e inicializando os filhos com NULL 
 	for(i = 0; i < ordem - 1; i++){
 		novo->chaves[i] = (char*) malloc(T_CHAVE*sizeof(char));
 		novo->filhos[i] = NULL;
 	}
-
+	//Inicizalização do último filho com NULL
 	novo->filhos[i] = NULL;
 
 	return novo;
 }
 
-/* Função que parte uma árvore */
+/* Função que reparte um nó da árvore e promove uma chave */
 void repartir_filho(NoB* pai, int i, int ordem){
+	
 	int j;
 
 	//z é o novo nó criado com a repartição
 	NoB* z = aloca_no(ordem);
 
-	//Y é o nó que será repartido
+	//y é o nó que será repartido
 	NoB* y = pai->filhos[i];
 
 	z->folha = y->folha;
@@ -70,7 +74,7 @@ void repartir_filho(NoB* pai, int i, int ordem){
 		z->NRR[j] = y->NRR[j + (int)(ordem/2)];
 	}
 
-	//Caso y não seja folha transfere-se metade dos filhos de z para y
+	//Caso y não seja folha(não tenha filhos), transfere-se metade dos filhos de z para y
 	if(!y->folha){
 		for(j = 0; j < (int)((ordem + 1)/2); j++){
 			z->filhos[j] = y->filhos[j + (int)(ordem/2)];
@@ -100,9 +104,10 @@ void repartir_filho(NoB* pai, int i, int ordem){
 	pai->n_nos++;
 }
 
+/* Função que insere uma nova chave em um nó que não está cheio */
 void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
 
-	//Numero de nós é decrementado por 1 pois em C vetores começam em 0
+	//Numero de nós é decrementado por 1 pois em C vetores começam em 0 e precisaremos acessar a chave 0 em algum momento
 	int i = no->n_nos - 1;
 
 	//Caso em que o nó é folha(não tem filhos)
@@ -132,9 +137,9 @@ void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
 		i++;
 
 		//Caso em que deseja-se inserir a nova chave em um filho cheio
-		if(no->filhos[i]->n_nos == ordem -1){
+		if(no->filhos[i]->n_nos == ordem - 1){
 
-			//Reparte-se o filho parra caber a nova chave
+			//Reparte-se o filho para caber a nova chave
 			repartir_filho(no, i, ordem);
 
 			//Decide-se quais dos dois novos filhos iremos entrar para inserir a nova chave
@@ -148,7 +153,7 @@ void insere_arvore_naocheia(NoB* no, char* chave, int NRR, int ordem){
 	}
 }
 
-/* Função que insere uma nova chave no nó */
+/* Função que insere uma nova chave na árvore */
 void inserir_btree(Barv* arv, char* chave, int NRR){
 
 	NoB* r = arv->raiz;
@@ -189,6 +194,8 @@ void inserir_btree(Barv* arv, char* chave, int NRR){
 	} /* else */
 }
 
+/* Função que libera todos os nós da árvore */
+/* Essa função não libera a árvore em si */
 void libera_arvore(Barv* arv, NoB* raiz){
 	int i;
 
