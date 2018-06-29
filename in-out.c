@@ -19,7 +19,7 @@ char *strupr(char *str){
 	return str;
 }
 
-/* Função que aloca um registro lido do arquivo */
+/* Função que aloca um registro lido do arquivo*/
 Registro* aloca_registro(void){
 	Registro* novo = (Registro*) malloc(sizeof(Registro));
 	novo->nome = (char*)malloc(41*sizeof(char));
@@ -48,51 +48,60 @@ void ler_registro_dados(FILE* fp, Registro* reg, int NRR){
 	fseek(fp, TAM_REG_DADOS*NRR, SEEK_SET);
 	fgets(registro, TAM_REG_DADOS, fp);
 
-	/* O nome são os s40 primeiros caracteres da linha */
+	/* O nome são os 40 primeiros caracteres da linha */
 	for(i = 0; i < 40; i++){
 		reg->nome[i] = registro[i];
 	}
 	reg->nome[40] = '\0';
 
-	/* A matricula são os 6 caracteres seguintes */
+	/* A matricula está da posição 41 até 41 + 6 */
 	for(i = 0; i < 6; i++){
 		reg->matricula[i] = registro[i + 41];
 	}
 	reg->matricula[6] = '\0';
 
-	/* O curso são os 4 caracteres seguintes */
+	/* O curso está na posição 48 até 48 + 4 */
 	for(i = 0; i < 4; i++){
 		reg->curso[i] = registro[i + 48];
 	}
 	reg->curso[3] = '\0';
 
-	/* A turma é o último caracter da linha */
+	/* A turma é o penúltimo caracter da linha */
 	reg->turma[0] = registro[52];
 	reg->turma[1] = '\0';
 }
 
+/* Função que ler um único registro no arquivo de índices */
 NoB* ler_registro_ind(FILE* fp, int NRR[], int ordem){
+	/* Tamanho do registro no arquivo de dados */
 	int TAM_REG = 14*(ordem - 1) + 5*ordem;
 	int i, j;
-	char chave_aux[14];
+	char chave_aux[14];	/* solução para quando a chave não existe */
 
 	NoB* no = aloca_no(ordem);
 
 	for(i = 0; i < ordem - 1; i++){
+		/* Lemos o espaço de uma chave ou de uma sequência de asteriscos */
 		fscanf(fp, "%s", chave_aux);
 		if(chave_aux[0] != '*'){
+			/* Se a chave existe, então ela vai está da posição 0 até a posição
+			   8 do vetor auxiliar*/
 			for(j = 0; j < 9; j++){
 				no->chaves[i][j] = chave_aux[j];
 			}
 			no->chaves[i][8] = '\0';
+			/* Lemos o NRR da chave adquirida */
 			fscanf(fp, "%d ", &no->NRR[i]);
 		}
 		else{
+			/* Se a chave não existe só copiamos os asteriscos para indicar que
+			   que ela não existe */
 			strcpy(no->chaves[i], "********");
 			no->NRR[i] = -1;
 		}
 	}
 
+	/* Lemos os filhos do nó */
 	for(i = 0; i < ordem; i++){
 		fscanf(fp, "%d", &NRR[i]);
 	}
@@ -100,38 +109,46 @@ NoB* ler_registro_ind(FILE* fp, int NRR[], int ordem){
 	return no;
 }
 
+/* Esta função irá ler o aquivo de dados e criar a árvore-B
+   a partir dele */
 void ler_arquivo_cria_arvore(Barv* arv, char* nome_arq){
 
 	FILE* fp = fopen(nome_arq, "r");
 	int NRR = 0;
 	int j;
-	char str[55];
-	char* chave = (char*) malloc(9*sizeof(char));
+	char str[55]; /* Uma linha no arquivo de dados */
+	char* chave = (char*) malloc(9*sizeof(char)); /* Só precisamos da chave aqui */
 	char ch;
 
 	while(!feof(fp)){
 		fseek(fp, 54*NRR, SEEK_SET);
 		fgets(str, 54, fp);
 
+		/* Verificando se o registro foi apagado */
 		if(str[0] != '*'){
+			/* Pegando as três primeiras letras do nome da pessoa */
 			for(j = 0; j < 3; j++){
 				chave[j] = str[j];
 			}
 
+			/* Fazendo as letras da chave maiúsculas */
 			chave = strupr(chave);
 
+			/* Copiando a matrícula do aluno */
 			for(j = 0; j < 5; j++){
 				chave[j + 3] = str[41 + j];
 			}
 
 			chave[8] = '\0';
 
+			/* Inserindo o registro na árvore */
 			inserir_btree(arv, chave, NRR);
 		}
 		
 		ch = fgetc(fp);
 		ch = fgetc(fp);
 
+		/* Passamos para a póxima linha */
 		NRR++;
 	}
 	fclose(fp);
@@ -188,18 +205,22 @@ int salvar_arvore(Barv* arv, NoB* raiz, FILE* fp){
 /* Função que imprime o arquivo de índices na tela */
 void ImprimirArquivo(FILE* fp){
 	int c, i = 0;
+	/* Indo para o início do arquivo */
 	rewind(fp);
+	/* Imprimindo a linha 0 */
 	printf("%2d. ", i);
 	while( (c = getc(fp)) != EOF){
 		putchar(c);
 		if(c == '\n'){
 			i++;
+			/* Imprimindo a linha atual */
 			printf("%2d. ", i);
 		}
 	}
 }
 
-/* Função responsavel por receber uma string e preencher o resto do seu espaço com espaço(" ") para facilitar a criação de chaves */
+/* Função responsavel por receber uma string e preencher o resto do seu
+   espaço com espaço(" ") para facilitar a criação de chaves */
 char* PreencheComEspaco(char* string, int tamanho){
 	size_t prevlen = strlen(string);
 	memset(string + prevlen,' ',tamanho - 1 - prevlen);
@@ -250,7 +271,7 @@ void insere_novo_registro(Barv* arv, char* nome_arq){
 
 	/* Registra-se o NRR do novo registro */
 	NRR = ftell(fp)/(14*(arv->ordem - 1) + 5*arv->ordem) - 1;
-	fprintf(fp, "%s %s %s %s\n",nome, matricula, curso,turma);
+	fprintf(fp, "%s %s %s %s\n", nome, matricula, curso, turma);
 
 	/* Procedimento de extrair a chave */
 	for(int i = 0; i < 3; i++){
@@ -260,7 +281,7 @@ void insere_novo_registro(Barv* arv, char* nome_arq){
 	chave = strupr(chave);
 
 	for(int i = 0; i < 5; i++){
-		chave[i+3] = matricula[i];
+		chave[i + 3] = matricula[i];
 	}
 
 	chave[8] = '\0';
@@ -324,6 +345,7 @@ int busca_chave(FILE* fp, char* chave, int ordem, int* n_seeks){
 				}
 			}
 
+			/* Procedimentos para liberar os espaços alocados */
 			for(j = 0; j < ordem - 1; j++){
 				free(no->chaves[j]);
 			}
@@ -334,7 +356,7 @@ int busca_chave(FILE* fp, char* chave, int ordem, int* n_seeks){
 			free(no);
 		} /* while(!achou) */
 	
-	return -1;
+	return -1; /* Se a chave não foi encontrada */
 }
 
 /* Função responsável por remover um registro do arquivo de dados para então recriar a árvore */
@@ -343,17 +365,20 @@ int remove_registo(char* nome_arq, char* chave, int ordem, Barv* arv, FILE* ind)
 
 	int NRR[ordem];
 	int nseeks;
+	/* Buscando a posição da chave a ser encontrada */
 	int pos = busca_chave(ind, chave, ordem, &nseeks);
 
+	/* Se ela não for encontrada avisamos ao usuário */
 	if(pos == -1){
 		printf("Chave não encontrada\n");
 		return - 1;
 	}
+	/* Vamos para a posição encontrada */
 	fseek(fp, 54*pos, SEEK_SET);
 
 	fputc('*', fp);
 
 	fclose(fp);
 
-	return 1;
+	return 1; /* Sucesso */
 }
