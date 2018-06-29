@@ -5,7 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 
-//const int T_CHAVE = 9;
+const int TAM_REG_DADOS = 54;
 
 char *strupr(char *str){
 	unsigned char *p = (unsigned char *)str;
@@ -16,6 +16,49 @@ char *strupr(char *str){
 	}
 
 	return str;
+}
+
+Registro* aloca_registro(void){
+	Registro* novo = (Registro*) malloc(sizeof(Registro));
+	novo->nome = (char*)malloc(41*sizeof(char));
+	novo->matricula = (char*)malloc(7*sizeof(char));
+	novo->curso = (char*)malloc(4*sizeof(char));
+	novo->turma = (char*)malloc(2*sizeof(char));
+
+	return novo;
+}
+
+void libera_registro(Registro* reg){
+	free(reg->nome);
+	free(reg->matricula);
+	free(reg->curso);
+	free(reg->turma);
+	free(reg);
+}
+
+void ler_registro_dados(FILE* fp, Registro* reg, int NRR){
+	char registro[TAM_REG_DADOS];
+	int i;
+	fseek(fp, TAM_REG_DADOS*NRR, SEEK_SET);
+	fgets(registro, TAM_REG_DADOS, fp);
+
+	for(i = 0; i < 40; i++){
+		reg->nome[i] = registro[i];
+	}
+	reg->nome[40] = '\0';
+
+	for(i = 0; i < 6; i++){
+		reg->matricula[i] = registro[i + 41];
+	}
+	reg->matricula[6] = '\0';
+
+	for(i = 0; i < 4; i++){
+		reg->curso[i] = registro[i + 48];
+	}
+	reg->curso[3] = '\0';
+
+	reg->turma[0] = registro[52];
+	reg->turma[1] = '\0';
 }
 
 NoB* ler_registro_ind(FILE* fp, int NRR[], int ordem){
@@ -124,10 +167,15 @@ int salvar_arvore(Barv* arv, NoB* raiz, FILE* fp){
 }
 
 void ImprimirArquivo(FILE* fp){
-	int c;
+	int c, i = 0;
 	rewind(fp);
+	printf("%2d. ", i);
 	while( (c = getc(fp)) != EOF){
 		putchar(c);
+		if(c == '\n'){
+			i++;
+			printf("%2d. ", i);
+		}
 	}
 }
 
@@ -261,7 +309,7 @@ int busca_chave(FILE* fp, char* chave, int ordem, int* n_seeks){
 	return -1;
 }
 
-void remove_registo(char* nome_arq, char* chave, int ordem, Barv* arv, FILE* ind){
+int remove_registo(char* nome_arq, char* chave, int ordem, Barv* arv, FILE* ind){
 	FILE* fp = fopen(nome_arq, "r+");
 
 	int NRR[ordem];
@@ -270,7 +318,7 @@ void remove_registo(char* nome_arq, char* chave, int ordem, Barv* arv, FILE* ind
 
 	if(pos == -1){
 		printf("Chave não encontrada\n");
-		return;
+		return - 1;
 	}
 	fseek(fp, 54*pos, SEEK_SET);
 
@@ -278,4 +326,5 @@ void remove_registo(char* nome_arq, char* chave, int ordem, Barv* arv, FILE* ind
 
 	fclose(fp);
 
+	return 1;
 }
