@@ -138,44 +138,54 @@ void ler_arquivo_cria_arvore(Barv* arv, char* nome_arq){
 	free(chave);
 }
 
-/* Função que salva os índices */
+/* Função que salva a árvore B no arquivo de índices */
 int salvar_arvore(Barv* arv, NoB* raiz, FILE* fp){
 	NoB* aux;
 	int i = 0;
 	int minha_posicao;
 	int NRR_filhos[arv->ordem];
 
+	/* Função de salvar árvore é chamada recursivamente para cada filho */
 	while((raiz->filhos[i] != NULL) && (i < raiz->n_nos + 1)){
 		NRR_filhos[i] = salvar_arvore(arv, raiz->filhos[i], fp);
 		i++;
 	}
   
+	/* Os espaços de filhos que não existem são preenchidos com -1 */
 	for( ; i < arv->ordem; i++){
 		NRR_filhos[i] = -1;
 	}
 
+	/* Armazena-se a linha da página no arquivo dividindo a posição atual do ponteiro pelo tamanho de uma linha */
 	minha_posicao = ftell(fp)/(14*(arv->ordem - 1) + 5*arv->ordem);
 
 
 	for(i = 0; i < arv->ordem - 1; i++){
+
+		/* Enquanto houverem chaves no nó, imprime-se a sua chave e NRR no arquivo */
 		if(i < raiz->n_nos){
 			fprintf(fp, "%s %4d ", raiz->chaves[i], raiz->NRR[i]);
 		}
+		/* Imprime-se ************* quando não há chave no espaço */
 		else{
 			fprintf(fp, "************* ");
 		}
 	}
 
+	/* Imprime-se o NRR da página no arquivo de índices */
 	for(i = 0; i < arv->ordem; i++){
 		fprintf(fp, "%4d ", NRR_filhos[i]);
 	}
 
+
 	fseek(fp, -1, SEEK_CUR);
 	fprintf(fp, "\n");
 
+	/* Retorna a linha da página */
 	return minha_posicao;
 }
 
+/* Função que imprime o arquivo de índices na tela */
 void ImprimirArquivo(FILE* fp){
 	int c, i = 0;
 	rewind(fp);
@@ -189,7 +199,7 @@ void ImprimirArquivo(FILE* fp){
 	}
 }
 
-//Função responsavel por receber uma string e preencher o resto do seu espaço com espaço(" ") para facilitar a criação de chaves
+/* Função responsavel por receber uma string e preencher o resto do seu espaço com espaço(" ") para facilitar a criação de chaves */
 char* PreencheComEspaco(char* string, int tamanho){
 	size_t prevlen = strlen(string);
 	memset(string + prevlen,' ',tamanho - 1 - prevlen);
@@ -197,6 +207,7 @@ char* PreencheComEspaco(char* string, int tamanho){
 	return string;
 }
 
+/* Função que insere um novo registro na árvore */
 void insere_novo_registro(Barv* arv, char* nome_arq){
 	char* nome = (char*)malloc(41*sizeof(char));
 	char* matricula = (char*)malloc(7*sizeof(char));
@@ -205,6 +216,7 @@ void insere_novo_registro(Barv* arv, char* nome_arq){
 	char* chave = (char*)malloc(9*sizeof(char));
 	int NRR;
 
+	/* Procedimento de leitura do registro */
 	do{
 	printf("Digite o nome do novo registro (Até 40 caracteres):\n");
 	scanf("\n%[^\n]", nome);
@@ -227,16 +239,20 @@ void insere_novo_registro(Barv* arv, char* nome_arq){
 
 	FILE* fp = fopen(nome_arq,"a+");
 
+	/* Preenche-se o resto da string com espaço */
 	nome = PreencheComEspaco(nome, 41);
 	matricula = PreencheComEspaco(matricula, 7);
 	curso = PreencheComEspaco(curso, 4);
 	turma = PreencheComEspaco(turma, 2);
 
+	/* Vamos para o fim do arquivo de dados */
 	fseek(fp, 0, SEEK_END);
 
+	/* Registra-se o NRR do novo registro */
 	NRR = ftell(fp)/(14*(arv->ordem - 1) + 5*arv->ordem) - 1;
 	fprintf(fp, "%s %s %s %s\n",nome, matricula, curso,turma);
 
+	/* Procedimento de extrair a chave */
 	for(int i = 0; i < 3; i++){
 		chave[i] = nome[i];
 	}
@@ -249,6 +265,7 @@ void insere_novo_registro(Barv* arv, char* nome_arq){
 
 	chave[8] = '\0';
 
+	/* Insere-se a chave na árvore B */
 	inserir_btree(arv, chave, NRR);
 
 	free(chave);
@@ -260,6 +277,7 @@ void insere_novo_registro(Barv* arv, char* nome_arq){
 	fclose(fp);
 }
 
+/* Função responsável por buscar uma chave no arquivo de índices */
 int busca_chave(FILE* fp, char* chave, int ordem, int* n_seeks){
 	int TAM_REG = 14*(ordem - 1) + 5*ordem;
 	int continua = 1, NRR[ordem], i, j;
@@ -319,6 +337,7 @@ int busca_chave(FILE* fp, char* chave, int ordem, int* n_seeks){
 	return -1;
 }
 
+/* Função responsável por remover um registro do arquivo de dados para então recriar a árvore */
 int remove_registo(char* nome_arq, char* chave, int ordem, Barv* arv, FILE* ind){
 	FILE* fp = fopen(nome_arq, "r+");
 
